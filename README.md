@@ -120,12 +120,14 @@ This focus allows for:
 - Optimized dealer website queries
 
 ### Supported Dealers
-The first 5 dealers from `specs/dealers.csv` are used as integration test opportunities:
+The first 5 dealers from `specs/dealers.csv` are scraped by default:
 1. BMW of San Francisco
 2. BMW of Berkeley
 3. Peter Pan BMW
 4. BMW of Mountain View
 5. BMW of Fremont
+
+**All 28 dealers** in `specs/dealers.csv` are configured and can be scraped individually, including **Valencia BMW**.
 
 ## Development
 
@@ -168,7 +170,15 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 playwright install chromium
+
+# Scrape first 5 dealers
 python run_scraper.py --limit 5
+
+# Scrape Valencia BMW specifically
+python run_scraper.py --dealer "Valencia BMW"
+
+# Scrape all 28 dealers
+python run_scraper.py --all
 ```
 
 ## API Documentation
@@ -190,11 +200,23 @@ Trigger a scrape operation.
 **Body (optional):**
 ```json
 {
-  "platform": "dealercom"  // or "roadster" or "all"
+  "platform": "dealercom",  // or "roadster" or "all"
+  "dealer": "Valencia BMW"  // optional: scrape specific dealer by name
 }
 ```
 
 Always scrapes for iX 2026 regardless of parameters.
+
+**Examples:**
+```bash
+# Scrape default 5 dealers
+curl -X POST http://localhost:9292/api/scrape
+
+# Scrape Valencia BMW specifically
+curl -X POST http://localhost:9292/api/scrape \
+  -H "Content-Type: application/json" \
+  -d '{"dealer": "Valencia BMW"}'
+```
 
 ### GET /api/stats
 Get inventory statistics and last scrape run info.

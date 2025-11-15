@@ -282,6 +282,7 @@ class ScrapeRequest(BaseModel):
     """Request model for scraping trigger."""
     platform: str = "all"
     model: str = None
+    dealer: str = None  # Optional specific dealer name to scrape
 
 
 @app.post("/api/scrape")
@@ -292,7 +293,7 @@ async def trigger_scrape(request: ScrapeRequest):
     Args:
         request: Scrape request with optional model filter
     """
-    logger.info(f"Scraping triggered - platform: {request.platform}, model: {request.model}")
+    logger.info(f"Scraping triggered - platform: {request.platform}, model: {request.model}, dealer: {request.dealer}")
     session = SessionLocal()
     try:
         # Create a new scrape run record
@@ -312,9 +313,15 @@ async def trigger_scrape(request: ScrapeRequest):
         cmd = [
             python_executable,
             str(scraper_dir / 'run_scraper.py'),
-            '--limit', '5',
             '--skip-db-init',
         ]
+
+        # If specific dealer is requested, scrape only that dealer
+        if request.dealer:
+            cmd.extend(['--dealer', request.dealer])
+        else:
+            # Otherwise, use default limit of 5 dealers
+            cmd.extend(['--limit', '5'])
 
         # Always filter for iX 2026
         cmd.extend(['--model', 'iX'])
@@ -346,11 +353,17 @@ async def trigger_scrape(request: ScrapeRequest):
 
         logger.info(f"Scraper subprocess started - PID: {process.pid}, scrape_run_id: {scrape_run_id}")
 
+        # Build response message
+        if request.dealer:
+            message = f'Scraping started for {request.dealer} (iX 2026)'
+        else:
+            message = 'Scraping started for iX 2026'
+
         return {
             'status': 'started',
             'scrape_run_id': scrape_run_id,
             'pid': process.pid,
-            'message': 'Scraping started for iX 2026',
+            'message': message,
             'log_file': str(log_file_path)
         }
 
