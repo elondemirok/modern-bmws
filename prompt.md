@@ -1,5 +1,3 @@
-You are implementing a local BMW finding application that browses for BMWs and brings you them in a local interface.
-
 0a. familiarize yourself with the source code in this directory
 
 0b. familiarize yourself with the specs under specs/
