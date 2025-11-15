@@ -116,13 +116,11 @@ function renderTable(vehicleList) {
 async function applyFilters() {
     const params = {};
 
-    const model = document.getElementById('model-filter').value;
     const dealer = document.getElementById('dealer-filter').value;
     const search = document.getElementById('search').value;
     const minPrice = document.getElementById('min-price').value;
     const maxPrice = document.getElementById('max-price').value;
 
-    if (model) params.model = model;
     if (dealer) params.dealer = dealer;
     if (search) params.search = search;
     if (minPrice) params.min_price = minPrice;
@@ -133,7 +131,6 @@ async function applyFilters() {
 
 // Reset filters
 async function resetFilters() {
-    document.getElementById('model-filter').value = '';
     document.getElementById('dealer-filter').value = '';
     document.getElementById('search').value = '';
     document.getElementById('min-price').value = '';

@@ -327,7 +327,7 @@ class TestVehicleModel:
         # Verify both vehicles exist
         vehicles = session.query(Vehicle).filter_by(dealer='BMW of Manhattan').all()
         assert len(vehicles) == 2
-        assert set([v.vin for v in vehicles]) == {'1234567890ABCDEFG', 'DIFFERENT1234VIN99'}
+        assert {v.vin for v in vehicles} == {'1234567890ABCDEFG', 'DIFFERENT1234VIN99'}
 
     def test_vehicle_query_by_model(self, session, sample_vehicle_data):
         """Test querying vehicles by model."""

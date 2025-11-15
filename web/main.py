@@ -12,6 +12,7 @@ from pathlib import Path
 # Add scraper path before other imports
 sys.path.insert(0, str(Path(__file__).parent.parent / 'scraper'))
 
+from dealers_scraper.models import ScrapeRun, Vehicle
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -19,8 +20,6 @@ from logging_config import setup_logging
 from pydantic import BaseModel
 from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker
-
-from dealers_scraper.models import ScrapeRun, Vehicle
 
 # Setup logging
 setup_logging()
@@ -329,7 +328,7 @@ async def trigger_scrape(request: ScrapeRequest):
         logger.info(f"Creating log file for scrape run {scrape_run_id}: {log_file_path}")
 
         # Open log file for subprocess output
-        log_file = open(log_file_path, 'w')
+        log_file = open(log_file_path, 'w')  # noqa: SIM115
 
         # Run scraper in background and capture process
         logger.info(f"Starting scraper subprocess with command: {' '.join(cmd)}")

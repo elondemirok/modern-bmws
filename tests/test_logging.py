@@ -468,7 +468,6 @@ class TestLogRotation:
 
         # Check that rotation occurred (backup file should exist)
         app_log = Path(temp_log_dir) / 'app.log'
-        app_log_1 = Path(temp_log_dir) / 'app.log.1'
 
         assert app_log.exists()
         # Size should be smaller than accumulated writes
@@ -545,7 +544,6 @@ class TestLoggerIsolation:
     def test_logger_cleanup_between_tests(self, clean_loggers):
         """Test that loggers are properly cleaned up between tests."""
         root = logging.getLogger()
-        initial_handler_count = len(root.handlers)
 
         MockLoggingConfig.setup_logging()
         # After setup, we should have at least one handler (console + possibly file handlers)
