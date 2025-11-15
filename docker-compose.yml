@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  scraper:
+    build:
+      context: ./scraper
+      dockerfile: Dockerfile
+    container_name: bmw_scraper
+    volumes:
+      - ./data:/data
+      - ./scraper:/app
+      - ./specs:/specs
+      - ./logs:/logs
+    environment:
+      - DATABASE_URL=sqlite:////data/bmw_inventory.db
+      - PLAYWRIGHT_HEADLESS=false
+      - DISPLAY=${DISPLAY:-host.docker.internal:0}
+    networks:
+      - bmw_network
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: bmw_web
+    ports:
+      - "9292:9292"
+    volumes:
+      - ./data:/data
+      - ./web:/app
+      - ./scraper:/scraper
+      - ./tests:/tests
+      - ./logs:/logs
+    environment:
+      - DATABASE_URL=sqlite:////data/bmw_inventory.db
+      - PLAYWRIGHT_HEADLESS=false
+      - DISPLAY=${DISPLAY:-host.docker.internal:0}
+    depends_on:
+      - scraper
+    networks:
+      - bmw_network
+
+networks:
+  bmw_network:
+    driver: bridge
